@@ -8,27 +8,12 @@ pipeline {
                 bat 'dir'
             }
         }
-        stage('Build') {
+       stage('Build & Test') {
             steps {
-                dir('pipeline-java-jenkins-docker-app') {
-                    bat 'mvn clean package'
-                }
+                bat 'mvn clean package'
             }
         }
-        stage('Test') {
-            steps {
-                dir('pipeline-java-jenkins-docker-app') {
-                    bat 'mvn test'
-                }
-            }
-        }
-        stage('Compile') {
-            steps {
-                dir('pipeline-java-jenkins-docker-app') {
-                    bat 'mvn compile'
-                }
-            }
-        }    
+            
         stage('Docker image Build') {
             steps {
                 dir('pipeline-java-jenkins-docker-app') {
