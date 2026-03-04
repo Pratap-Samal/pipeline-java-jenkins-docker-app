@@ -1,0 +1,68 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone Github Repository') {
+            steps {
+                git branch: 'main', changelog: false, poll: false, url: 'https://github.com/Pratap-Samal/pipeline-java-jenkins-docker-app.git'
+                bat 'dir'
+            }
+        }
+        stage('Build') {
+            steps {
+                dir('pipeline-java-jenkins-docker-app') {
+                    bat 'mvn clean package'
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                dir('pipeline-java-jenkins-docker-app') {
+                    bat 'mvn test'
+                }
+            }
+        }
+        stage('Compile') {
+            steps {
+                dir('pipeline-java-jenkins-docker-app') {
+                    bat 'mvn compile'
+                }
+            }
+        }    
+        stage('Docker image Build') {
+            steps {
+                dir('pipeline-java-jenkins-docker-app') {
+                    bat 'docker build -t pipeline-java-jenkins-docker-app:latest .'
+                }
+            }
+        } 
+        stage('Docker image Tag') {
+            steps {
+                dir('pipeline-java-jenkins-docker-app') {
+                    bat 'docker tag pipeline-java-jenkins-docker-app:latest pratapkumar/pipeline-java-jenkins-docker-app:latest'
+                }
+            }
+        }   
+        stage('Docker Login ') {
+            steps {
+                dir('pipeline-java-jenkins-docker-app') {
+                    bat 'docker login -u pratapkumar -p pratapanupama@123'
+                }
+            }
+        }
+        stage('Docker Image Push ') {
+            steps {
+                dir('pipeline-java-jenkins-docker-app') {
+                    bat 'docker push pratapkumar/pipeline-java-jenkins-docker-app:latest'
+                }
+            }
+        }
+        stage('Clean Work Space ') {
+            steps {
+                dir('pipeline-java-jenkins-docker-app') {
+                    cleanWs()
+                }
+            }
+        }
+    }
+}
