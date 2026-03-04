@@ -10,9 +10,9 @@ pipeline {
         }
         stage('Build') {
             steps {
-                
+                dir('pipeline-java-jenkins-docker-app') {
                     bat 'mvn clean package'
-                
+                }
             }
         }
         stage('Test') {
