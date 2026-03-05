@@ -31,7 +31,7 @@ pipeline {
         stage('Docker Login ') {
             steps {
                 dir('pipeline-java-jenkins-docker-app') {
-                    bat 'docker login -u pratapkumar -p pratapanupama@123'
+                    bat 'docker login -u pratapkumar -p <your-password>'
                 }
             }
         }
