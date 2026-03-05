@@ -1,0 +1,54 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "pratapkumar/pipeline-java-jenkins-docker-app"
+        IMAGE_TAG = "${BUILD_NUMBER}"
+    }
+
+    stages {
+
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/Pratap-Samal/pipeline-java-jenkins-docker-app.git'
+            }
+        }
+
+        stage('Build & Test') {
+            steps {
+                bat 'mvn clean package'
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                bat "docker build -t %IMAGE_NAME%:%IMAGE_TAG% ."
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    bat 'docker login -u %DOCKER_USER% -p %DOCKER_PASS%'
+                }
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                bat "docker push %IMAGE_NAME%:%IMAGE_TAG%"
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                cleanWs()
+            }
+        }
+    }
+}
